@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài tập 1 - Carousel</title>
+    <style>
+        /* CSS Responsive & Style */
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; }
+        h1 { margin-bottom: 20px; }
+        
+        .carousel-container {
+            width: 100%;
+            max-width: 600px; /* Responsive: Giới hạn chiều rộng trên desktop */
+            position: relative;
+            overflow: hidden; /* Ẩn phần hình ảnh tràn ra ngoài */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .carousel-slide {
+            display: flex;
+            width: 100%;
+            transition: transform 0.5s ease-in-out; /* CSS Transition mượt mà */
+        }
+
+        .carousel-slide img {
+            width: 100%; /* Mỗi ảnh chiếm 100% khung chứa */
+            flex-shrink: 0;
+            object-fit: cover;
+            height: 350px;
+        }
+
+        /* Nút điều hướng */
+        .btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 10;
+        }
+        .btn:hover { background-color: rgba(0,0,0,0.8); }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        /* Giải thích logic */
+        .explanation { max-width: 600px; margin-top: 20px; background: #f4f4f4; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>Bài 1: Image Carousel</h1>
+    <a href="index.html">Về trang chủ</a> <br><br>
+
+    <div class="carousel-container">
+        <div class="carousel-slide" id="slide">
+            <img src="/images/anh_1.jpg" alt="Image 1">
+            <img src="/images/anh_2.jpg" alt="Image 2">
+            <img src="/images/anh_3.jpg" alt="Image 3">
+            <img src="/images/anh_4.jpg" alt="Image 4">
+            <img src="/images/anh_5.jpg" alt="Image 5">
+            <img src="/images/anh_6.jpg" alt="Image 6">
+        </div>
+        <button class="btn prev" id="prevBtn">&#10094;</button>
+        <button class="btn next" id="nextBtn">&#10095;</button>
+    </div>
+
+
+    <script>
+        const slide = document.getElementById('slide');
+        const images = document.querySelectorAll('.carousel-slide img');
+        
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let counter = 0;
+        const size = images[0].clientWidth; // Lấy chiều rộng ảnh
+        let autoSlideInterval;
+
+        // Hàm cập nhật vị trí slide
+        function updateSlide() {
+            slide.style.transform = 'translateX(' + (-size * counter) + 'px)';
+        }
+
+        // Logic Next
+        function nextSlide() {
+            if (counter >= images.length - 1) {
+                counter = 0; // Vòng lại đầu
+            } else {
+                counter++;
+            }
+            updateSlide();
+        }
+
+        // Logic Prev
+        function prevSlide() {
+            if (counter <= 0) {
+                counter = images.length - 1; // Vòng về cuối
+            } else {
+                counter--;
+            }
+            updateSlide();
+        }
+
+        // Event Listeners
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetTimer(); // Reset bộ đếm khi tương tác
+        });
+
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetTimer();
+        });
+
+        // Tự động chạy
+        function startTimer() {
+            autoSlideInterval = setInterval(nextSlide, 3000);
+        }
+
+        function resetTimer() {
+            clearInterval(autoSlideInterval);
+            startTimer();
+        }
+
+        // Responsive: Cập nhật lại size khi resize cửa sổ
+        window.addEventListener('resize', () => {
+            slide.style.transition = "none"; // Tắt animation khi resize để không bị giật
+            updateSlide(); // Cập nhật lại vị trí đúng
+            setTimeout(() => slide.style.transition = "transform 0.5s ease-in-out", 50);
+        });
+
+        startTimer(); // Bắt đầu khi load trang
+    </script>
+</body>
+</html>
